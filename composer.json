@@ -1,0 +1,23 @@
+{
+    "name": "beta/bx.vote",
+    "type": "bitrix-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Nesterov",
+            "email": "alex19pov31@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "beta/base.vote": "dev-master"
+    },
+    "repositories": [
+        {
+          "type": "vcs",
+          "url": "git@github.com:beta-eto-code/base.vote.git"
+        }
+    ]
+}

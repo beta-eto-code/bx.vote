@@ -1,0 +1,98 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "81c40b4c8dd48f89dba8e12d2de23905",
+    "packages": [
+        {
+            "name": "beta/base.vote",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beta-eto-code/base.vote.git",
+                "reference": "54c9dcafc4f3a21e959cb0e1ff7096de31655432"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beta-eto-code/base.vote/zipball/54c9dcafc4f3a21e959cb0e1ff7096de31655432",
+                "reference": "54c9dcafc4f3a21e959cb0e1ff7096de31655432",
+                "shasum": ""
+            },
+            "require": {
+                "beta/bx.model": "dev-master",
+                "ext-json": "*",
+                "php": ">=7.2"
+            },
+            "default-branch": true,
+            "type": "lib",
+            "autoload": {
+                "psr-4": {
+                    "Base\\Vote\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Nesterov",
+                    "email": "alex19pov31@gmail.com"
+                }
+            ],
+            "description": "Simple wrapper bitrix vote",
+            "support": {
+                "source": "https://github.com/beta-eto-code/base.vote/tree/master",
+                "issues": "https://github.com/beta-eto-code/base.vote/issues"
+            },
+            "time": "2021-05-25T08:15:02+00:00"
+        },
+        {
+            "name": "beta/bx.model",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beta-eto-code/bx.model.git",
+                "reference": "328e2806ec7b5349254d0a40305574b714f43965"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beta-eto-code/bx.model/zipball/328e2806ec7b5349254d0a40305574b714f43965",
+                "reference": "328e2806ec7b5349254d0a40305574b714f43965",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "bitrix-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Nesterov",
+                    "email": "alex19pov31@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/beta-eto-code/bx.model/issues",
+                "source": "https://github.com/beta-eto-code/bx.model/tree/0.7.0"
+            },
+            "time": "2021-05-24T16:55:03+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "beta/base.vote": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.2",
+        "ext-json": "*"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}
