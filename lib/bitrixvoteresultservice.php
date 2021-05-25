@@ -61,7 +61,7 @@ class BitrixVoteResultService extends BaseBitrixVoteResultService
         }
 
         $answerVariantId = (int)$answerVariant->getProp('id');
-        $question = $answerVariant->getQueston();
+        $question = $answerVariant->getQuestion();
         $questionId = (int)$question->getProp('id');
         $answerVariantType = (int)$answerResult->getAnswerVariant()->getType();
 
