@@ -10,6 +10,7 @@ use Base\Vote\Interfaces\VoteSchemaInterface;
 use Base\Vote\Interfaces\VoteServiceInterface;
 use Bitrix\Main\Result;
 use Bx\Model\Interfaces\CollectionInterface;
+use Bx\Model\Interfaces\QueryInterface;
 
 class VoteService implements VoteServiceInterface, VoteResultServiceInterface
 {
@@ -55,6 +56,15 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
     public function getVoteSchemasByCriteria(array $criteria, int $limit = null, int $offset = null): CollectionInterface
     {
         return $this->voteService->getVoteSchemasByCriteria($criteria, $limit, $offset);
+    }
+
+    /**
+     * @param QueryInterface $query
+     * @return CollectionInterface
+     */
+    public function getVoteSchemasByQuery(QueryInterface $query): CollectionInterface
+    {
+        return $this->voteService->getVoteSchemasByQuery($query);
     }
 
     /**

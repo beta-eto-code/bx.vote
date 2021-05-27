@@ -31,6 +31,7 @@ use Bitrix\Vote\EO_Vote;
 use Bitrix\Vote\UserTable;
 use Bx\Model\Collection;
 use Bx\Model\Interfaces\CollectionInterface;
+use Bx\Model\Interfaces\QueryInterface;
 use Exception;
 use Throwable;
 
@@ -51,7 +52,7 @@ class BitrixVoteService implements VoteServiceInterface
     }
 
     /**
-     * Дополнительные параметры для сортировки:
+     * Дополнительные параметры для фильтрации:
      * - ACTUAL_FOR - указываем идентификатор пользователя, будут выбраны опросы которые пользователь еще не проходил
      * - IS_SINGLE - возможные значения: Y (в опросе только один вопрос), N (в опросе более одного вопроса).
      * 
@@ -87,8 +88,56 @@ class BitrixVoteService implements VoteServiceInterface
             ],
         ];
 
-        $voteColletion = ExtendedVoteTable::getList($params)->fetchCollection();
-        foreach($voteColletion as $voteElement) {
+        $voteCollection = ExtendedVoteTable::getList($params)->fetchCollection();
+        foreach($voteCollection as $voteElement) {
+            $collection->append($this->buildVoteSchema($voteElement));
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Дополнительные параметры для фильтрации:
+     * - ACTUAL_FOR - указываем идентификатор пользователя, будут выбраны опросы которые пользователь еще не проходил
+     * - IS_SINGLE - возможные значения: Y (в опросе только один вопрос), N (в опросе более одного вопроса).
+     * 
+     * @param QueryInterface $query
+     * @return CollectionInterface
+     */
+    public function getVoteSchemasByQuery(QueryInterface $query): CollectionInterface
+    {
+        $params = [];
+
+        $collection = new Collection();
+        $idToSelect = $this->getFilteredIdList(
+            $query->getFilter(), 
+            $query->getLimit(), 
+            $query->getOffset()
+        );
+        if (empty($idToSelect)) {
+            return $collection;
+        }
+
+        $params['filter'] = [
+            '=ID' => $idToSelect,
+        ];
+
+        $defaultSort = [
+            'C_SORT' => 'asc',
+            'ID' => 'asc', 
+        ];
+        $params['order'] = $query->hasSort() ? $query->getSort() : $defaultSort;
+
+        $requiredSelect = [
+            'QUESTIONS',
+            'QUESTIONS.ANSWERS'
+        ];
+        $params['select'] = $query->hasSelect() ? 
+            array_merge($requiredSelect, $query->getSelect()) : 
+            array_merge($requiredSelect, ['*']);
+
+        $voteCollection = ExtendedVoteTable::getList($params)->fetchCollection();
+        foreach($voteCollection as $voteElement) {
             $collection->append($this->buildVoteSchema($voteElement));
         }
 

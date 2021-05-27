@@ -54,12 +54,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/beta-eto-code/bx.model.git",
-                "reference": "328e2806ec7b5349254d0a40305574b714f43965"
+                "reference": "719c4e28d318ca4d1183cd1381ea2aebc026331c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beta-eto-code/bx.model/zipball/328e2806ec7b5349254d0a40305574b714f43965",
-                "reference": "328e2806ec7b5349254d0a40305574b714f43965",
+                "url": "https://api.github.com/repos/beta-eto-code/bx.model/zipball/719c4e28d318ca4d1183cd1381ea2aebc026331c",
+                "reference": "719c4e28d318ca4d1183cd1381ea2aebc026331c",
                 "shasum": ""
             },
             "default-branch": true,
@@ -76,9 +76,9 @@
             ],
             "support": {
                 "issues": "https://github.com/beta-eto-code/bx.model/issues",
-                "source": "https://github.com/beta-eto-code/bx.model/tree/0.7.0"
+                "source": "https://github.com/beta-eto-code/bx.model/tree/master"
             },
-            "time": "2021-05-24T16:55:03+00:00"
+            "time": "2021-05-27T12:05:28+00:00"
         }
     ],
     "packages-dev": [],
