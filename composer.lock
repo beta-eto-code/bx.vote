@@ -4,28 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81c40b4c8dd48f89dba8e12d2de23905",
+    "content-hash": "0c16f4c94f4216596e681eb460972a39",
     "packages": [
         {
             "name": "beta/base.vote",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beta-eto-code/base.vote.git",
-                "reference": "54c9dcafc4f3a21e959cb0e1ff7096de31655432"
+                "reference": "c8f3c5c32348f6704b836f2a9d5bf58152902668"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beta-eto-code/base.vote/zipball/54c9dcafc4f3a21e959cb0e1ff7096de31655432",
-                "reference": "54c9dcafc4f3a21e959cb0e1ff7096de31655432",
+                "url": "https://api.github.com/repos/beta-eto-code/base.vote/zipball/c8f3c5c32348f6704b836f2a9d5bf58152902668",
+                "reference": "c8f3c5c32348f6704b836f2a9d5bf58152902668",
                 "shasum": ""
             },
             "require": {
-                "beta/bx.model": "dev-master",
+                "beta/bx.model": "^1.0",
                 "ext-json": "*",
                 "php": ">=7.2"
             },
-            "default-branch": true,
             "type": "lib",
             "autoload": {
                 "psr-4": {
@@ -43,26 +42,25 @@
             ],
             "description": "Simple wrapper bitrix vote",
             "support": {
-                "source": "https://github.com/beta-eto-code/base.vote/tree/master",
+                "source": "https://github.com/beta-eto-code/base.vote/tree/1.0.0",
                 "issues": "https://github.com/beta-eto-code/base.vote/issues"
             },
-            "time": "2021-05-25T08:15:02+00:00"
+            "time": "2021-07-14T19:03:22+00:00"
         },
         {
             "name": "beta/bx.model",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beta-eto-code/bx.model.git",
-                "reference": "719c4e28d318ca4d1183cd1381ea2aebc026331c"
+                "reference": "8d7446eee24bcd798150b1eccd5d52571c737539"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beta-eto-code/bx.model/zipball/719c4e28d318ca4d1183cd1381ea2aebc026331c",
-                "reference": "719c4e28d318ca4d1183cd1381ea2aebc026331c",
+                "url": "https://api.github.com/repos/beta-eto-code/bx.model/zipball/8d7446eee24bcd798150b1eccd5d52571c737539",
+                "reference": "8d7446eee24bcd798150b1eccd5d52571c737539",
                 "shasum": ""
             },
-            "default-branch": true,
             "type": "bitrix-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -76,17 +74,15 @@
             ],
             "support": {
                 "issues": "https://github.com/beta-eto-code/bx.model/issues",
-                "source": "https://github.com/beta-eto-code/bx.model/tree/master"
+                "source": "https://github.com/beta-eto-code/bx.model/tree/1.0.0"
             },
-            "time": "2021-05-27T12:05:28+00:00"
+            "time": "2021-07-14T16:22:19+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {
-        "beta/base.vote": 20
-    },
+    "minimum-stability": "stable",
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -94,5 +90,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
