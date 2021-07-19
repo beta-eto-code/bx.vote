@@ -61,7 +61,7 @@ class bx_vote extends CModule
             return true;
         }
 
-        $modulePath = getLocalPath("modules/bx.model/install/install.php");
+        $modulePath = getLocalPath("modules/bx.model/install/index.php");
         if (!$modulePath) {
             $this->setError('Отсутствует модуль bx.model - https://github.com/beta-eto-code/bx.model');
             return false;
