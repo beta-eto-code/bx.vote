@@ -20,8 +20,21 @@ class bx_vote extends CModule
         $this->MODULE_DESCRIPTION = "Опросы (альтернативный API)";
     }
 
+    /**
+     * @param string $message
+     */
+    public function setError(string $message)
+    {
+        $GLOBALS["APPLICATION"]->ThrowException($message);
+    }
+
     public function DoInstall()
     {
+        $result = $this->installRequiredModules();
+        if (!$result) {
+            return false;
+        }
+
         $this->InstallDB();
         $this->InstallEvents();
         $this->InstallFiles();
@@ -36,6 +49,32 @@ class bx_vote extends CModule
         $this->UnInstallFiles();
         ModuleManager::UnRegisterModule($this->MODULE_ID);
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function installRequiredModules(): bool
+    {
+        $isInstalled = ModuleManager::isModuleInstalled('bx.model');
+        if ($isInstalled) {
+            return true;
+        }
+
+        $modulePath = getLocalPath("modules/bx.model/install/install.php");
+        if (!$modulePath) {
+            $this->setError('Отсутствует модуль bx.model - https://github.com/beta-eto-code/bx.model');
+            return false;
+        }
+
+        require_once $modulePath;
+        $moduleInstaller = new bx_router();
+        $resultInstall = (bool)$moduleInstaller->DoInstall();
+        if (!$resultInstall) {
+            $this->setError('Ошибка установки модуля bx.model');
+        }
+
+        return $resultInstall;
     }
 
     public function InstallDB()
