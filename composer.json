@@ -18,5 +18,11 @@
           "type": "vcs",
           "url": "git@github.com:beta-eto-code/base.vote.git"
         }
-    ]
+    ],
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "scripts": {
+        "cs": "phpcs --standard=PSR12 ./lib/"
+    }
 }

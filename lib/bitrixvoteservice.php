@@ -35,7 +35,6 @@ use Bx\Model\Interfaces\QueryInterface;
 use Exception;
 use Throwable;
 
-
 class BitrixVoteService implements VoteServiceInterface
 {
     /**
@@ -47,7 +46,7 @@ class BitrixVoteService implements VoteServiceInterface
         $voteSchema = $this->getVoteSchemasByCriteria([
             '=ID' => $id,
         ], 1)->first();
-        
+
         return $voteSchema instanceof VoteSchemaInterface ? $voteSchema : null;
     }
 
@@ -55,14 +54,17 @@ class BitrixVoteService implements VoteServiceInterface
      * Дополнительные параметры для фильтрации:
      * - ACTUAL_FOR - указываем идентификатор пользователя, будут выбраны опросы которые пользователь еще не проходил
      * - IS_SINGLE - возможные значения: Y (в опросе только один вопрос), N (в опросе более одного вопроса).
-     * 
+     *
      * @param array $criteria
      * @param integer|null $limit
      * @param integer|null $offset
      * @return VoteSchemaInterface[]|CollectionInterface
      */
-    public function getVoteSchemasByCriteria(array $criteria, int $limit = null, int $offset = null): CollectionInterface
-    {
+    public function getVoteSchemasByCriteria(
+        array $criteria,
+        int $limit = null,
+        int $offset = null
+    ): CollectionInterface {
         Loader::includeModule('vote');
 
         $collection = new Collection();
@@ -79,7 +81,7 @@ class BitrixVoteService implements VoteServiceInterface
             'filter' => $criteria,
             'order' => [
                 'C_SORT' => 'asc',
-                'ID' => 'asc', 
+                'ID' => 'asc',
             ],
             'select' => [
                 '*',
@@ -89,7 +91,7 @@ class BitrixVoteService implements VoteServiceInterface
         ];
 
         $voteCollection = ExtendedVoteTable::getList($params)->fetchCollection();
-        foreach($voteCollection as $voteElement) {
+        foreach ($voteCollection as $voteElement) {
             $collection->append($this->buildVoteSchema($voteElement));
         }
 
@@ -100,7 +102,7 @@ class BitrixVoteService implements VoteServiceInterface
      * Дополнительные параметры для фильтрации:
      * - ACTUAL_FOR - указываем идентификатор пользователя, будут выбраны опросы которые пользователь еще не проходил
      * - IS_SINGLE - возможные значения: Y (в опросе только один вопрос), N (в опросе более одного вопроса).
-     * 
+     *
      * @param QueryInterface $query
      * @return CollectionInterface
      */
@@ -110,8 +112,8 @@ class BitrixVoteService implements VoteServiceInterface
 
         $collection = new Collection();
         $idToSelect = $this->getFilteredIdList(
-            $query->getFilter(), 
-            $query->getLimit(), 
+            $query->getFilter(),
+            $query->getLimit(),
             $query->getOffset()
         );
         if (empty($idToSelect)) {
@@ -124,7 +126,7 @@ class BitrixVoteService implements VoteServiceInterface
 
         $defaultSort = [
             'C_SORT' => 'asc',
-            'ID' => 'asc', 
+            'ID' => 'asc',
         ];
         $params['order'] = $query->hasSort() ? $query->getSort() : $defaultSort;
 
@@ -132,12 +134,12 @@ class BitrixVoteService implements VoteServiceInterface
             'QUESTIONS',
             'QUESTIONS.ANSWERS'
         ];
-        $params['select'] = $query->hasSelect() ? 
-            array_merge($requiredSelect, $query->getSelect()) : 
+        $params['select'] = $query->hasSelect() ?
+            array_merge($requiredSelect, $query->getSelect()) :
             array_merge($requiredSelect, ['*']);
 
         $voteCollection = ExtendedVoteTable::getList($params)->fetchCollection();
-        foreach($voteCollection as $voteElement) {
+        foreach ($voteCollection as $voteElement) {
             $collection->append($this->buildVoteSchema($voteElement));
         }
 
@@ -146,8 +148,8 @@ class BitrixVoteService implements VoteServiceInterface
 
     /**
      * @param array $criteria
-     * @param integer $limit
-     * @param integer $offset
+     * @param int|null $limit
+     * @param int|null $offset
      * @return array
      */
     private function getParamsForFilter(array $criteria, int $limit = null, int $offset = null): array
@@ -168,7 +170,7 @@ class BitrixVoteService implements VoteServiceInterface
                         'ID'
                     ]
                 ]);
-                while($voteUserData = $voteUserQuery->fetch()) {
+                while ($voteUserData = $voteUserQuery->fetch()) {
                     $voteUserId[] = (int)$voteUserData['ID'];
                 }
             }
@@ -182,13 +184,13 @@ class BitrixVoteService implements VoteServiceInterface
             'filter' => $criteria,
             'order' => [
                 'C_SORT' => 'asc',
-                'ID' => 'asc', 
+                'ID' => 'asc',
             ],
             'runtime' => [
                 'IS_SINGLE' => new ExpressionField('IS_SINGLE', 'IF(COUNT(%s) <= 1, "Y", "N")', 'QUESTIONS.ID'),
                 'RESULT' => (new Reference(
                     'RESULT',
-                    ExtendedEventTable::class, 
+                    ExtendedEventTable::class,
                     Join::on("this.ID", "ref.VOTE_ID")->whereIn('ref.VOTE_USER_ID', $voteUserId)
                 ))->configureJoinType('LEFT')
             ],
@@ -227,7 +229,7 @@ class BitrixVoteService implements VoteServiceInterface
         $result = [];
         $params = $this->getParamsForFilter($criteria, $limit, $offset);
         $query = ExtendedVoteTable::getList($params);
-        while($item = $query->fetch()) {
+        while ($item = $query->fetch()) {
             $id = (int)$item['ID'];
             if ($id > 0) {
                 $result[] = (int)$item['ID'];
@@ -277,13 +279,17 @@ class BitrixVoteService implements VoteServiceInterface
         $voteSchema->setProp('channel_id', $voteElement->getChannelId());
 
         $questionColleciton = $voteElement->getQuestions() ?? [];
-        foreach($questionColleciton as $questionElement) {
+        foreach ($questionColleciton as $questionElement) {
             /**
              * @var EO_Question $questionElement
              */
             $answerCollection = $questionElement->getAnswers() ?? [];
             $type = (int)$questionElement->getFieldType();
-            $isMultiple = in_array($type, [QuestionType::CHECKBOX, QuestionType::MULTISELECT, QuestionType::MIXED_TYPE]);
+            $isMultiple = in_array($type, [
+                QuestionType::CHECKBOX,
+                QuestionType::MULTISELECT,
+                QuestionType::MIXED_TYPE
+            ]);
             $question = new Question([
                 'title' => $questionElement->getQuestion(),
                 'type' => $type,
@@ -293,7 +299,7 @@ class BitrixVoteService implements VoteServiceInterface
             $question->setProp('id', $questionElement->getId());
             $voteSchema->addQuestion($question);
 
-            foreach($answerCollection as $answerElement) {
+            foreach ($answerCollection as $answerElement) {
                 /**
                  * @var EO_Answer $answerElement
                  */
@@ -325,7 +331,8 @@ class BitrixVoteService implements VoteServiceInterface
             $voteId = (int)$voteSchema->getProp('id');
             $channelId = (int)($voteSchema->getProp('channel_id') ?? 1);
 
-            $isActive = $voteSchema->getProp('active');
+            $activeValue = $voteSchema->getProp('active');
+            $isActive = $activeValue === null || (bool)$activeValue;
             $dateStartValue = $voteSchema->getProp('date_start');
             $dateEndValue = $voteSchema->getProp('date_end');
             $dateStart = $dateStartValue instanceof DateTime ? $dateStartValue : new DateTime();
@@ -336,7 +343,7 @@ class BitrixVoteService implements VoteServiceInterface
                 'DESCRIPTION' => $voteSchema->getDescription(),
                 'TIMESTAMP_X' => new DateTime(),
                 'C_SORT' => $voteSchema->getProp('sort') ?? 100,
-                'ACTIVE' => $isActive === null ? 'Y' : ((bool)$isActive ? 'Y' : 'N'),
+                'ACTIVE' => $isActive ? 'Y' : 'N',
                 'ANONYMITY' => (int)$voteSchema->getProp('anonymity'),
                 'NOTIFY' => (int)$voteSchema->getProp('notify'),
                 'DATE_START' => $dateStart,
@@ -350,7 +357,7 @@ class BitrixVoteService implements VoteServiceInterface
                 'KEEP_IP_SEC' => (int)($voteSchema->getProp('keep_ip_sec') ?? 0),
                 'OPTIONS' => (int)($voteSchema->getProp('options') ?? 1),
             ];
-            
+
             $saveResult = null;
             if ($voteId > 0) {
                 $saveResult = ExtendedVoteTable::update($voteId, $voteData);
@@ -364,10 +371,9 @@ class BitrixVoteService implements VoteServiceInterface
                 $voteId = (int)$saveResult->getId();
                 $voteSchema->setProp('id', $voteId);
             }
-    
-            $this->saveQuestions($voteSchema);
 
-        } catch(Throwable $e) {
+            $this->saveQuestions($voteSchema);
+        } catch (Throwable $e) {
             $connection->rollbackTransaction();
             return $result->addError(new Error($e->getMessage()));
         }
@@ -380,10 +386,11 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param VoteSchemaInterface $voteSchema
      * @return void
+     * @throws Exception
      */
     private function deleteQuestions(VoteSchemaInterface $voteSchema)
     {
-        foreach($voteSchema->getQuestions('delete') as $question) {
+        foreach ($voteSchema->getQuestions('delete') as $question) {
             /**
              * @var QuestionInterface $question
              */
@@ -405,6 +412,7 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param VoteSchemaInterface $voteSchema
      * @return void
+     * @throws Exception
      */
     private function saveQuestions(VoteSchemaInterface $voteSchema)
     {
@@ -414,7 +422,7 @@ class BitrixVoteService implements VoteServiceInterface
         }
 
         $this->deleteQuestions($voteSchema);
-        foreach($voteSchema->getQuestions() as $question) {
+        foreach ($voteSchema->getQuestions() as $question) {
             /**
              * @var QuestionInterface $question
              */
@@ -436,7 +444,7 @@ class BitrixVoteService implements VoteServiceInterface
 
             if (!$saveResult->isSuccess()) {
                 throw new Exception(implode(', ', $saveResult->getErrorMessages()));
-            } elseif(!$questionId) {
+            } elseif (!$questionId) {
                 $questionId = (int)$saveResult->getId();
                 $question->setProp('id', $questionId);
             }
@@ -448,10 +456,11 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param QuestionInterface $question
      * @return void
+     * @throws Exception
      */
     private function deleteAnswerVariants(QuestionInterface $question)
     {
-        foreach($question->getAnswerVariants('delete') as $answerVariant) {
+        foreach ($question->getAnswerVariants('delete') as $answerVariant) {
             /**
              * @var QuestionInterface $question
              */
@@ -473,6 +482,7 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param QuestionInterface $question
      * @return void
+     * @throws Exception
      */
     private function saveAnswerVariants(QuestionInterface $question)
     {
@@ -482,7 +492,7 @@ class BitrixVoteService implements VoteServiceInterface
         }
 
         $this->deleteAnswerVariants($question);
-        foreach($question->getAnswerVariants() as $answerVariant) {
+        foreach ($question->getAnswerVariants() as $answerVariant) {
             /**
              * @var AnswerVariantInterface $answerVariant
              */
@@ -503,7 +513,7 @@ class BitrixVoteService implements VoteServiceInterface
 
             if (!$saveResult->isSuccess()) {
                 throw new Exception(implode(', ', $saveResult->getErrorMessages()));
-            } elseif(!$answerVariantId) {
+            } elseif (!$answerVariantId) {
                 $answerVariantId = (int)$saveResult->getId();
                 $answerVariant->setProp('id', $answerVariantId);
             }

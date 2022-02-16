@@ -12,8 +12,10 @@ class ExtendedVoteTable extends VoteTable
     public static function getMap()
     {
         $map = parent::getMap();
-        $map['QUESTIONS'] = (new OneToMany('QUESTIONS', ExtendedQuestionTable::class, 'VOTE'))->configureJoinType('LEFT');
-        $map['RESULTS'] = (new OneToMany('RESULTS', ExtendedEventTable::class, 'VOTE'))->configureJoinType('LEFT');
+        $map['QUESTIONS'] = (new OneToMany('QUESTIONS', ExtendedQuestionTable::class, 'VOTE'))
+            ->configureJoinType('LEFT');
+        $map['RESULTS'] = (new OneToMany('RESULTS', ExtendedEventTable::class, 'VOTE'))
+            ->configureJoinType('LEFT');
 
         return $map;
     }

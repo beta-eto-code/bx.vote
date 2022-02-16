@@ -19,8 +19,9 @@ use Bx\Model\Interfaces\CollectionInterface;
 
 abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
 {
-        /**
-     * @param VoteResultInterface $voteResultInterface
+    /**
+     * @param VoteSchemaInterface $voteSchema
+     * @param array $params
      * @return VoteResultInterface[]|CollectionInterface
      */
     public function getVoteResultList(VoteSchemaInterface $voteSchema, array $params = []): CollectionInterface
@@ -40,7 +41,7 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
         unset($params['filter']['VOTE_ID']);
         $params['filter']['=VOTE_ID'] = $voteId;
         $collection = ExtendedEventTable::getList($params)->fetchCollection();
-        foreach($collection as $voteResultItem) {
+        foreach ($collection as $voteResultItem) {
             $result = new VoteResult($voteSchema, [
                 'props' => [
                     'id' => $voteResultItem->getId(),
@@ -56,12 +57,12 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
              * @var EO_EventQuestion_Collection $questions
              */
             $questions = $voteResultItem->getEventQuestions();
-            foreach($questions as $question) {
+            foreach ($questions as $question) {
                 /**
                  * @var EO_EventAnswer_Collection $answers
                  */
                 $answers = $question->getEventAnswers();
-                foreach($answers as $answer) {
+                foreach ($answers as $answer) {
                     $answerVariantId = $answer->getAnswerId();
                     $answerVariant = $this->getAnswerVariantById($voteSchema, $answerVariantId);
                     if (!($answerVariant instanceof AnswerVariantInterface)) {
@@ -84,13 +85,15 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
      * @param integer $answerVariantId
      * @return AnswerVariantInterface|null
      */
-    private function getAnswerVariantById(VoteSchemaInterface $voteSchema, int $answerVariantId): AnswerVariantInterface
-    {
+    private function getAnswerVariantById(
+        VoteSchemaInterface $voteSchema,
+        int $answerVariantId
+    ): ?AnswerVariantInterface {
         foreach ($voteSchema->getQuestions() as $question) {
             /**
              * @var QuestionInterface $question
              */
-            foreach($question->getAnswerVariants() as $answerVariant) {
+            foreach ($question->getAnswerVariants() as $answerVariant) {
                 /**
                  * @var AnswerVariantInterface $answerVariant
                  */
@@ -104,7 +107,7 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
     }
 
     /**
-     * @param VoteSchemaInterface $voteSchemaInterface
+     * @param VoteSchemaInterface $voteSchema
      * @param integer $userId
      * @return VoteResultInterface|null
      */

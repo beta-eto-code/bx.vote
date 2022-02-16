@@ -14,7 +14,8 @@ class ExtendedEventTable extends EventTable
     public static function getMap()
     {
         $map = parent::getMap();
-        $map['EVENT_QUESTIONS'] = (new OneToMany('EVENT_QUESTIONS', ExtendedEventQuestionTable::class, 'VOTE'))->configureJoinType('LEFT');
+        $map['EVENT_QUESTIONS'] = (new OneToMany('EVENT_QUESTIONS', ExtendedEventQuestionTable::class, 'VOTE'))
+            ->configureJoinType('LEFT');
         $map['VOTE'] = new Reference('VOTE', ExtendedVoteTable::class, Join::on("this.VOTE_ID", "ref.ID"));
 
         return $map;

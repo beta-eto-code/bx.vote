@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace Bx\Vote;
 
 use Base\Vote\Interfaces\AnswerResultInterface;
-use Base\Vote\Interfaces\AnswerVariantInterface;
 use Base\Vote\Interfaces\AnswerVariantType;
 use Base\Vote\Interfaces\VoteResultInterface;
-use Base\Vote\Interfaces\VoteSchemaInterface;
 use Bitrix\Main\Result;
 use Bitrix\Vote\Vote;
 
 class BitrixVoteResultService extends BaseBitrixVoteResultService
 {
     /**
-     * @param VoteResultInterface $voteResultInterface
+     * @param VoteResultInterface $voteResult
      * @return Result
      */
     public function saveVoteResult(VoteResultInterface $voteResult): Result
     {
         $result = new Result();
         $vote = $voteResult->getVoteSchema();
-        $voteId = $vote instanceof VoteSchemaInterface ? (int)$vote->getProp('id') : 0;
+        $voteId = (int)$vote->getProp('id');
 
         /**
          * @var Vote $bxVote
@@ -30,7 +28,7 @@ class BitrixVoteResultService extends BaseBitrixVoteResultService
         $bxVote = Vote::loadFromId($voteId);
 
         $requestVote = ['EXTRA' => ['HIDDEN' => 'Y']];
-        foreach($voteResult->getAnswerResults() as $answerResult) {
+        foreach ($voteResult->getAnswerResults() as $answerResult) {
             /**
              * @var AnswerResultInterface $answerResult
              */
@@ -52,20 +50,13 @@ class BitrixVoteResultService extends BaseBitrixVoteResultService
      */
     private function prepareAnswerForSaveResult(AnswerResultInterface $answerResult, &$resultData)
     {
-        /**
-         * @var AnswerResultInterface $answerResult
-         */
         $answerVariant = $answerResult->getAnswerVariant();
-        if (!($answerVariant instanceof AnswerVariantInterface)) {
-            return;
-        }
-
         $answerVariantId = (int)$answerVariant->getProp('id');
         $question = $answerVariant->getQuestion();
         $questionId = (int)$question->getProp('id');
-        $answerVariantType = (int)$answerResult->getAnswerVariant()->getType();
+        $answerVariantType = $answerResult->getAnswerVariant()->getType();
 
-        switch($answerVariantType) {
+        switch ($answerVariantType) {
             case AnswerVariantType::RADIO:
                 $fieldName = "vote_radio_{$questionId}";
                 $resultData[$fieldName] = $answerVariantId;

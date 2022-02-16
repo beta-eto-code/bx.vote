@@ -14,7 +14,11 @@ class ExtendedEventAnswerTable extends EventAnswerTable
     {
         $map = parent::getMap();
         $map['ANSWER'] = new Reference('ANSWER', ExtendedAnswerTable::class, Join::on("this.ANSWER_ID", "ref.ID"));
-        $map['EVENT_QUESTION'] = new Reference('EVENT_QUESTION', ExtendedEventQuestionTable::class, Join::on("this.EVENT_QUESTION_ID", "ref.ID"));
+        $map['EVENT_QUESTION'] = new Reference(
+            'EVENT_QUESTION',
+            ExtendedEventQuestionTable::class,
+            Join::on("this.EVENT_QUESTION_ID", "ref.ID")
+        );
 
         return $map;
     }

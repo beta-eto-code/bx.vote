@@ -21,11 +21,11 @@ use Bitrix\Vote\User;
 use Exception;
 use Throwable;
 
-
 class BitrixVoteResultAltService extends BaseBitrixVoteResultService
 {
     /**
-     * @param VoteResultInterface $voteResultInterface
+     * @param VoteResultInterface $voteResult
+     * @param int|null $userId
      * @return Result
      */
     public function saveVoteResult(VoteResultInterface $voteResult, int $userId = null): Result
@@ -45,15 +45,15 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
             if (!$voteId) {
                 throw new Exception('Invalid vote!');
             }
-    
-            $voteUserId = (int)($userId ? 
-                User::loadFromId($userId)->getId() : 
+
+            $voteUserId = (int)($userId ?
+                User::loadFromId($userId)->getId() :
                 ($voteResult->getProp('user_id') ?? User::getCurrent()->getId())
             );
             if (!$voteUserId) {
                 throw new Exception('User not found!');
             }
-    
+
             $context = Context::getCurrent();
             $dataVoteValue = $voteResult->getProp('date_vote');
             $voteData = [
@@ -65,23 +65,23 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
                 'VALID' => $voteResult->getProp('valid') ?? 'Y',
                 'VISIBLE' => $voteResult->getProp('visible') ?? 'Y',
             ];
-    
+
             $voteSaveResult = null;
             if ($voteResultId > 0) {
                 $voteSaveResult = EventTable::update($voteId, $voteData);
             } else {
                 $voteSaveResult = EventTable::add($voteData);
             }
-    
+
             if (!$voteSaveResult->isSuccess()) {
                 throw new Exception(implode(', ', $voteSaveResult->getErrorMessages()));
             } elseif (!$voteResultId) {
                 $voteResultId = (int)$voteSaveResult->getId();
                 $voteResult->setProp('id', $voteResultId);
             }
-    
+
             $this->deleteAnswerResults($voteResult);
-            foreach($vote->getQuestions() as $question) {
+            foreach ($vote->getQuestions() as $question) {
                 $this->saveQuestionAnswerResults($voteResult, $question);
             }
 
@@ -91,8 +91,7 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
                     select count(ID) 
                     from `b_vote_event` 
                     where VOTE_ID = {$voteId} and VALID = 'Y'
-                ) where ID = {$voteId}"
-            );
+                ) where ID = {$voteId}");
 
             $connection->queryExecute("
                 update `b_vote_user` 
@@ -100,9 +99,8 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
                     select count(ID) 
                     from `b_vote_event` 
                     where VOTE_USER_ID = {$voteUserId} and VALID = 'Y'
-                ) where ID = {$voteUserId}"
-            );
-        } catch(Throwable $e) {
+                ) where ID = {$voteUserId}");
+        } catch (Throwable $e) {
             $connection->rollbackTransaction();
             return $result->addError(new Error($e->getMessage()));
         }
@@ -118,7 +116,7 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
      */
     private function deleteAnswerResults(VoteResultInterface $voteResult)
     {
-        foreach($voteResult->getAnswerResults('delete') as $answerResult) {
+        foreach ($voteResult->getAnswerResults('delete') as $answerResult) {
             /**
              * @var AnswerResultInterface $answerResult
              */
@@ -135,11 +133,10 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
      * @param VoteResultInterface $voteResult
      * @param QuestionInterface $question
      * @return void
+     * @throws Exception
      */
     private function saveQuestionAnswerResults(VoteResultInterface $voteResult, QuestionInterface $question)
     {
-        $vote = $voteResult->getVoteSchema();
-        $voteId = $vote instanceof VoteSchema ? (int)$vote->getProp('id') : 0;
         $voteResultId = (int)$voteResult->getProp('id');
         $questionId = (int)$question->getProp('id');
         if (!$questionId) {
@@ -147,7 +144,7 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
         }
 
         $questionResultId = null;
-        foreach($voteResult->getAnswerResultsByQuestion($question) as $answerResult){
+        foreach ($voteResult->getAnswerResultsByQuestion($question) as $answerResult) {
             /**
              * @var AnswerResultInterface $answerResult
              */
@@ -171,8 +168,6 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
             }
             if (!$resultAnswer->isSuccess()) {
                 throw new Exception(implode(', ', $resultAnswer->getErrorMessages()));
-            } elseif (!$answerResultId) {
-                $answerResultId = (int)$resultAnswer->getId();
             }
         }
     }
@@ -181,6 +176,7 @@ class BitrixVoteResultAltService extends BaseBitrixVoteResultService
      * @param integer $voteResultId
      * @param integer $questionId
      * @return integer
+     * @throws Exception
      */
     private function saveQuestionResult(int $voteResultId, int $questionId): int
     {

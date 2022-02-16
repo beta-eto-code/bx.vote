@@ -53,8 +53,11 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
      * @param integer|null $offset
      * @return VoteSchemaInterface[]|CollectionInterface
      */
-    public function getVoteSchemasByCriteria(array $criteria, int $limit = null, int $offset = null): CollectionInterface
-    {
+    public function getVoteSchemasByCriteria(
+        array $criteria,
+        int $limit = null,
+        int $offset = null
+    ): CollectionInterface {
         return $this->voteService->getVoteSchemasByCriteria($criteria, $limit, $offset);
     }
 
@@ -77,7 +80,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
     }
 
     /**
-     * @param VoteResultInterface $voteResultInterface
+     * @param VoteResultInterface $voteResult
      * @return Result
      */
     public function saveVoteResult(VoteResultInterface $voteResult): Result
@@ -87,7 +90,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
 
     /**
      * @param VoteSchemaInterface $voteSchema
-     * @param integer $limit
+     * @param array $params
      * @return VoteResultInterface[]|CollectionInterface
      */
     public function getVoteResultList(VoteSchemaInterface $voteSchema, array $params = []): CollectionInterface
@@ -96,7 +99,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
     }
 
     /**
-     * @param VoteSchemaInterface $voteSchemaInterface
+     * @param VoteSchemaInterface $voteSchema
      * @param integer $userId
      * @return VoteResultInterface|null
      */

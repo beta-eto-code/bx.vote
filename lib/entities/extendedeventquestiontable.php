@@ -12,7 +12,8 @@ class ExtendedEventQuestionTable extends EventQuestionTable
     public static function getMap()
     {
         $map = parent::getMap();
-        $map['EVENT_ANSWERS'] = (new OneToMany('EVENT_ANSWERS', ExtendedEventAnswerTable::class, 'EVENT_QUESTION'))->configureJoinType('LEFT');
+        $map['EVENT_ANSWERS'] = (new OneToMany('EVENT_ANSWERS', ExtendedEventAnswerTable::class, 'EVENT_QUESTION'))
+            ->configureJoinType('LEFT');
 
         return $map;
     }
