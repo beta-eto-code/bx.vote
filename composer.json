@@ -2,6 +2,7 @@
     "name": "beta/bx.vote",
     "type": "bitrix-module",
     "license": "MIT",
+    "description": "Simple wrapper bitrix vote",
     "authors": [
         {
             "name": "Alexander Nesterov",
