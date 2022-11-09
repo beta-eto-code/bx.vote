@@ -1,5 +1,11 @@
 # Опросы/голосования Bitrix (альтернативный API)
 
+## Установка
+
+```bash
+composer require beta/bx.vote
+```
+
 [Базовая реализация](https://github.com/beta-eto-code/base.vote)
 
 В данном модуле реализованы сервисы:

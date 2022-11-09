@@ -14,12 +14,6 @@
         "ext-json": "*",
         "beta/base.vote": "^1.0"
     },
-    "repositories": [
-        {
-          "type": "vcs",
-          "url": "git@github.com:beta-eto-code/base.vote.git"
-        }
-    ],
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.6"
     },
