@@ -7,6 +7,7 @@ namespace Bx\Vote;
 use Base\Vote\Interfaces\AnswerResultInterface;
 use Base\Vote\Interfaces\AnswerVariantType;
 use Base\Vote\Interfaces\VoteResultInterface;
+use Bitrix\Main\AccessDeniedException;
 use Bitrix\Main\Result;
 use Bitrix\Vote\Vote;
 
@@ -15,6 +16,7 @@ class BitrixVoteResultService extends BaseBitrixVoteResultService
     /**
      * @param VoteResultInterface $voteResult
      * @return Result
+     * @throws AccessDeniedException
      */
     public function saveVoteResult(VoteResultInterface $voteResult): Result
     {

@@ -8,6 +8,7 @@ use Base\Vote\Interfaces\VoteResultInterface;
 use Base\Vote\Interfaces\VoteResultServiceInterface;
 use Base\Vote\Interfaces\VoteSchemaInterface;
 use Base\Vote\Interfaces\VoteServiceInterface;
+use Bitrix\Main\AccessDeniedException;
 use Bitrix\Main\Result;
 use Bx\Model\Interfaces\CollectionInterface;
 use Bx\Model\Interfaces\QueryInterface;
@@ -82,6 +83,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
     /**
      * @param VoteResultInterface $voteResult
      * @return Result
+     * @throws AccessDeniedException
      */
     public function saveVoteResult(VoteResultInterface $voteResult): Result
     {
@@ -92,6 +94,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
      * @param VoteSchemaInterface $voteSchema
      * @param array $params
      * @return VoteResultInterface[]|CollectionInterface
+     * @throws \Exception
      */
     public function getVoteResultList(VoteSchemaInterface $voteSchema, array $params = []): CollectionInterface
     {
@@ -102,6 +105,7 @@ class VoteService implements VoteServiceInterface, VoteResultServiceInterface
      * @param VoteSchemaInterface $voteSchema
      * @param integer $userId
      * @return VoteResultInterface|null
+     * @throws \Exception
      */
     public function getVoteResultByUser(VoteSchemaInterface $voteSchema, int $userId): ?VoteResultInterface
     {

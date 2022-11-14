@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Bx\Vote;
 
 use Base\Vote\AnswerVariant;
+use Bitrix\Main\ArgumentException;
+use Bitrix\Main\DB\SqlQueryException;
+use Bitrix\Main\LoaderException;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
 use Bx\Vote\Entities\ExtendedQuestionTable;
 use Bx\Vote\Entities\ExtendedVoteTable;
 use Bx\Vote\Entities\ExtendedAnswerTable;
@@ -32,14 +37,43 @@ use Bitrix\Vote\UserTable;
 use Bx\Model\Collection;
 use Bx\Model\Interfaces\CollectionInterface;
 use Bx\Model\Interfaces\QueryInterface;
+use Bitrix\Vote\User;
 use Exception;
 use Throwable;
 
 class BitrixVoteService implements VoteServiceInterface
 {
     /**
+     * Инициализация пользователя для опросов без cookies
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     */
+    public static function initVoteUserWithoutCookies(int $userId): void
+    {
+        $rowData = UserTable::getRow([
+            'select' => ['ID'],
+            'filter' => [
+                '=AUTH_USER_ID',
+            ],
+            'order' => [
+                'ID' => 'desc',
+            ]
+        ]);
+        $voteUserId = (int) ($rowData['ID'] ?? 0);
+        if ($voteUserId > 0) {
+            $key = "0_$userId";
+            User::$usersIds[$key] = $voteUserId;
+        }
+    }
+
+    /**
      * @param integer $id
      * @return VoteSchemaInterface|null
+     * @throws ArgumentException
+     * @throws LoaderException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     public function getVoteSchemaById(int $id): ?VoteSchemaInterface
     {
@@ -59,6 +93,10 @@ class BitrixVoteService implements VoteServiceInterface
      * @param integer|null $limit
      * @param integer|null $offset
      * @return VoteSchemaInterface[]|CollectionInterface
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     * @throws LoaderException
      */
     public function getVoteSchemasByCriteria(
         array $criteria,
@@ -105,6 +143,9 @@ class BitrixVoteService implements VoteServiceInterface
      *
      * @param QueryInterface $query
      * @return CollectionInterface
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     public function getVoteSchemasByQuery(QueryInterface $query): CollectionInterface
     {
@@ -151,6 +192,9 @@ class BitrixVoteService implements VoteServiceInterface
      * @param int|null $limit
      * @param int|null $offset
      * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     private function getParamsForFilter(array $criteria, int $limit = null, int $offset = null): array
     {
@@ -223,6 +267,9 @@ class BitrixVoteService implements VoteServiceInterface
      * @param integer|null $limit
      * @param integer|null $offset
      * @return array
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     private function getFilteredIdList(array $criteria, int $limit = null, int $offset = null): array
     {
@@ -242,6 +289,9 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param array $criteria
      * @return integer
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
      */
     public function getVoteSchemaCount(array $criteria): int
     {
@@ -318,6 +368,7 @@ class BitrixVoteService implements VoteServiceInterface
     /**
      * @param VoteSchemaInterface $voteSchema
      * @return Result
+     * @throws SqlQueryException
      */
     public function saveVote(VoteSchemaInterface $voteSchema): Result
     {

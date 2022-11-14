@@ -16,6 +16,7 @@ use Bitrix\Vote\EO_EventQuestion_Collection;
 use Bitrix\Vote\User;
 use Bx\Model\Collection;
 use Bx\Model\Interfaces\CollectionInterface;
+use Exception;
 
 abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
 {
@@ -23,6 +24,7 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
      * @param VoteSchemaInterface $voteSchema
      * @param array $params
      * @return VoteResultInterface[]|CollectionInterface
+     * @throws Exception
      */
     public function getVoteResultList(VoteSchemaInterface $voteSchema, array $params = []): CollectionInterface
     {
@@ -69,7 +71,7 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
                         continue;
                     }
 
-                    $resultAnswer = $result->cerateAnswerResult($answerVariant, $answer->getMessage());
+                    $resultAnswer = $result->createAnswerResult($answerVariant, $answer->getMessage());
                     $resultAnswer->setProp('id', $answer->getId());
                 }
             }
@@ -110,16 +112,18 @@ abstract class BaseBitrixVoteResultService implements VoteResultServiceInterface
      * @param VoteSchemaInterface $voteSchema
      * @param integer $userId
      * @return VoteResultInterface|null
+     * @throws Exception
      */
     public function getVoteResultByUser(VoteSchemaInterface $voteSchema, int $userId): ?VoteResultInterface
     {
-        $voteUserId = User::loadFromId($userId)->getId();
+        $voteUser = User::loadFromId($userId);
+        $voteUserId = $voteUser->getVotedUserId() ?: $voteUser->getId();
         $list = $this->getVoteResultList($voteSchema, [
             'filter' => [
                 '=VOTE_USER_ID' => $voteUserId,
             ],
         ]);
-        $voteResult = current($list);
+        $voteResult = $list->first();
 
         return $voteResult instanceof VoteResultInterface ? $voteResult : null;
     }
