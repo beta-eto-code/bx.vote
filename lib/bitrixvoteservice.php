@@ -54,7 +54,7 @@ class BitrixVoteService implements VoteServiceInterface
         $rowData = UserTable::getRow([
             'select' => ['ID'],
             'filter' => [
-                '=AUTH_USER_ID',
+                '=AUTH_USER_ID' => $userId,
             ],
             'order' => [
                 'ID' => 'desc',
